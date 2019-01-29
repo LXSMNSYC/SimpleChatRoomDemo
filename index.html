@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+            let client = new WebSocket('ws://127.0.0.1:3030');
+
+            client.onopen = e => {
+                console.log('You are now connected.');
+            }
+
+            client.onclose = e => {
+                console.log('You have been disconnected.');
+            }
+
+            client.onmessage = data => {
+                data = JSON.parse(data.data);
+
+                let event = data.event;
+                let content = data.content;
+
+                console.log(content);
+            }
+
+            function setIdentity(name){
+                client.send(JSON.stringify({
+                    event: 'set-identity',
+                    content: name
+                }));    
+            }    
+
+            function reply(message){
+                client.send(JSON.stringify({
+                    event: 'reply',
+                    content: message
+                }));    
+            }
+        </script>
+    </body>
+</html>
