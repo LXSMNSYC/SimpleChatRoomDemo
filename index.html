@@ -10,12 +10,12 @@
         <script type="text/javascript">
             let client = new WebSocket('ws://127.0.0.1:3030');
 
-            client.onopen = e => {
-                console.log('You are now connected.');
-            }
 
-            client.onclose = e => {
-                console.log('You have been disconnected.');
+            function loadMessages(){
+                client.send(JSON.stringify({
+                    event: 'messages',
+                    content: ''
+                }));
             }
 
             client.onmessage = data => {
@@ -24,7 +24,28 @@
                 let event = data.event;
                 let content = data.content;
 
-                console.log(content);
+                switch(event){
+                    case 'reply': case 'set-identity':
+                        console.log(content);
+                    break;
+
+                    case 'messages':
+                        loadMessages();
+                        console.log(content);
+                    break;
+
+                    case 'message-load-done':
+                    break;
+                }
+            }
+
+            client.onopen = e => {
+                loadMessages();
+                console.log('You are now connected.');
+            }
+
+            client.onclose = e => {
+                console.log('You have been disconnected.');
             }
 
             function setIdentity(name){
@@ -40,6 +61,7 @@
                     content: message
                 }));    
             }
+
         </script>
     </body>
 </html>
